@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="15fe55e0-35df-43bc-b0bc-6fa458caa81a" name="Default Changelist" comment="" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="15fe55e0-35df-43bc-b0bc-6fa458caa81a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,24 +20,23 @@
     </option>
   </component>
   <component name="GOROOT" path="/usr/lib/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1V9dIpj56KA3CFxlDaEZ0oPB4Bk" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/main.go" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../db-inteface-v2" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
   </component>
   <component name="RunManager">
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
@@ -45,7 +48,63 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="277" y="1" width="802" height="670" key="#Go" timestamp="1578526307687">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="277" y="1" width="802" height="670" key="#Go/0.0.1366.768@0.0.1366.768" timestamp="1578526307687" />
+    <state x="465" y="97" width="426" height="477" key="FileChooserDialogImpl" timestamp="1578526059597">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="465" y="97" width="426" height="477" key="FileChooserDialogImpl/0.0.1366.768@0.0.1366.768" timestamp="1578526059597" />
+    <state width="1320" height="186" key="GridCell.Tab.0.bottom" timestamp="1578526060881">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state width="1320" height="186" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1578526060881" />
+    <state width="1320" height="186" key="GridCell.Tab.0.center" timestamp="1578526060881">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state width="1320" height="186" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1578526060881" />
+    <state width="1320" height="186" key="GridCell.Tab.0.left" timestamp="1578526060880">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state width="1320" height="186" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1578526060880" />
+    <state width="1320" height="186" key="GridCell.Tab.0.right" timestamp="1578526060881">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state width="1320" height="186" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1578526060881" />
+    <state x="178" y="-22" key="SettingsEditor" timestamp="1578526292683">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="178" y="-22" key="SettingsEditor/0.0.1366.768@0.0.1366.768" timestamp="1578526292683" />
+    <state x="690" y="-9" width="664" height="741" key="dock-window-1" timestamp="1578527142531">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="690" y="-9" width="664" height="741" key="dock-window-1/0.0.1366.768@0.0.1366.768" timestamp="1578527142531" />
   </component>
 </project>
