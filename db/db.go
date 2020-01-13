@@ -1,10 +1,13 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	_ "github.com/jackc/pgx"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
+	"log"
+	"sync"
 	"time"
 )
 
@@ -67,7 +70,14 @@ type User struct {
 	Name string
 }
 
-var defaultPgUrl = "postgres://postgres@127.0.0.1:5432/badge?sslmode=disable"
+type DataBaseController struct {
+	UsersChan      chan User
+	CategoriesChan chan Category
+	MessagesChan   chan Message
+	Conn           *sql.DB
+}
+
+var defaultPgUrl = "postgres://postgres@127.0.0.1:5432/generatorfast?sslmode=disable"
 
 func Connect(connStr *string) (*sql.DB, error) {
 	if connStr == nil {
@@ -97,109 +107,169 @@ func CreateTables(conn *sql.DB) error {
 	return nil
 }
 
-func InsertUsers(conn *sql.DB, users *[]User) error {
-	bdTx, err := conn.Begin()
-	if err != nil {
-		return err
-	}
+func (dbc *DataBaseController) InsertData(ctx context.Context, wg *sync.WaitGroup) error {
+	defer func() {
+		wg.Done()
+		log.Println("Worker stop")
+	} ()
 
-	stmt, err := bdTx.Prepare(pq.CopyInSchema("public", "users", "id", "name"))
-	if err != nil {
-		return err
-	}
+	log.Println("Worker Start")
 
-	for _, row := range *users {
-		if _, err := stmt.Exec((row).Id, (row).Name);
-			err != nil {
+	categoriesBdTx, err := dbc.Conn.Begin()
+	if err != nil {
+		err := categoriesBdTx.Rollback()
+		if err != nil {
 			return err
 		}
 	}
 
-	_, err = stmt.Exec()
+	categoriesStmt, err := categoriesBdTx.Prepare(pq.CopyInSchema("public", "categories", "id", "name", "parent_id"))
 	if err != nil {
-		return err
-	}
-
-	err = stmt.Close()
-	if err != nil {
-		return err
-	}
-
-	err = bdTx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func InsertCategories(conn *sql.DB, categories *[]Category) error {
-	bdTx, err := conn.Begin()
-	if err != nil {
-		return err
-	}
-
-	stmt, err := bdTx.Prepare(pq.CopyInSchema("public", "categories", "id", "name", "parent_id"))
-	if err != nil {
-		return err
-	}
-
-	for _, row := range *categories {
-		if _, err := stmt.Exec(row.Id, row.Name, row.ParentId);
-			err != nil {
+		err := categoriesBdTx.Rollback()
+		if err != nil {
 			return err
 		}
 	}
 
-	_, err = stmt.Exec()
+	usersBdTx, err := dbc.Conn.Begin()
 	if err != nil {
-		return err
-	}
-
-	err = stmt.Close()
-	if err != nil {
-		return err
-	}
-
-	err = bdTx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func InsertMessages(conn *sql.DB, messages *[]Message) error {
-	bdTx, err := conn.Begin()
-	if err != nil {
-		return err
-	}
-
-	stmt, err := bdTx.Prepare(pq.CopyInSchema("public", "messages", "id", "text", "category_id", "posted_at", "author_id"))
-	if err != nil {
-		return err
-	}
-
-	for _, row := range *messages {
-		if _, err := stmt.Exec(row.Id, row.Text, row.CategoryId, row.PostedAt, row.AuthorId);
-			err != nil {
+		err := usersBdTx.Rollback()
+		if err != nil {
 			return err
 		}
 	}
 
-	_, err = stmt.Exec()
+	usersStmt, err := usersBdTx.Prepare(pq.CopyInSchema("public", "users", "id", "name"))
 	if err != nil {
-		return err
+		err := usersBdTx.Rollback()
+		if err != nil {
+			return err
+		}
 	}
 
-	err = stmt.Close()
+	messagesDdTx, err := dbc.Conn.Begin()
 	if err != nil {
-		return err
+		err := messagesDdTx.Rollback()
+		if err != nil {
+			return err
+		}
 	}
 
-	err = bdTx.Commit()
+	messagesStmt, err := messagesDdTx.Prepare(pq.CopyInSchema("public", "messages", "id", "text", "category_id", "posted_at", "author_id"))
 	if err != nil {
-		return err
+		err := messagesDdTx.Rollback()
+		if err != nil {
+			return err
+		}
+	}
+
+	for {
+		select {
+		case category := <-dbc.CategoriesChan:
+			{
+				if _, err := categoriesStmt.Exec(category.Id, category.Name, category.ParentId);
+					err != nil {
+					err := categoriesBdTx.Rollback()
+					if err != nil {
+						return err
+					}
+				}
+			}
+		case user := <-dbc.UsersChan:
+			{
+				if _, err := usersStmt.Exec((user).Id, (user).Name);
+					err != nil {
+					err := usersBdTx.Rollback()
+					if err != nil {
+						return err
+					}
+				}
+			}
+		case message := <-dbc.MessagesChan:
+			{
+				if _, err := messagesStmt.Exec(message.Id, message.Text, message.CategoryId, message.PostedAt, message.AuthorId);
+					err != nil {
+					err := messagesDdTx.Rollback()
+					if err != nil {
+						return err
+					}
+				}
+			}
+		case <-ctx.Done():
+			_, err = categoriesStmt.Exec()
+			if err != nil {
+				err := categoriesBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = categoriesStmt.Close()
+			if err != nil {
+				err := categoriesBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = categoriesBdTx.Commit()
+			if err != nil {
+				err := categoriesBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			_, err = usersStmt.Exec()
+			if err != nil {
+				err := usersBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = usersStmt.Close()
+			if err != nil {
+				err := usersBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = usersBdTx.Commit()
+			if err != nil {
+				err := usersBdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			_, err = messagesStmt.Exec()
+			if err != nil {
+				err := messagesDdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = messagesStmt.Close()
+			if err != nil {
+				err := messagesDdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			err = messagesDdTx.Commit()
+			if err != nil {
+				err := messagesDdTx.Rollback()
+				if err != nil {
+					return err
+				}
+			}
+
+			return nil
+		}
 	}
 
 	return nil
