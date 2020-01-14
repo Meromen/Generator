@@ -3,10 +3,17 @@ package db
 import (
 	"context"
 	"database/sql"
+	//"github.com/golang-migrate/migrate"
+
+	"github.com/golang-migrate/migrate"
+	_ "github.com/golang-migrate/migrate/database/postgres"
+	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/jackc/pgx"
+	"github.com/joho/godotenv"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 	"sync"
 	"time"
 )
@@ -77,11 +84,25 @@ type DataBaseController struct {
 	Conn           *sql.DB
 }
 
-var defaultPgUrl = "postgres://postgres@127.0.0.1:5432/generatorfast?sslmode=disable"
-
 func Connect(connStr *string) (*sql.DB, error) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	if connStr == nil {
-		connStr = &defaultPgUrl
+		pgUrl := os.Getenv("DEFAULT_PG_URL")
+		connStr = &pgUrl
+	}
+
+	m, err := migrate.New(
+		"file://db/migrations",
+		*connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := m.Up(); err != nil {
+		log.Fatal(err)
 	}
 
 	db, err := sql.Open("postgres", *connStr)

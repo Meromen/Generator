@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	WORKERS_COUNT    = 30
+	WORKERS_COUNT    = 32
 	USERS_COUNT      = 500000
 	MESSAGES_COUNT   = 10000000
 	CATEGORIES_COUNT = 5000
@@ -30,10 +30,10 @@ func main() {
 		panic(err)
 	}
 
-	err = dbpkg.CreateTables(dbInst)
-	if err != nil {
-		panic(err)
-	}
+	//err = dbpkg.CreateTables(dbInst)
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	dbController := dbpkg.DataBaseController{
 		UsersChan:      usersChan,
