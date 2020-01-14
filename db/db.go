@@ -85,7 +85,7 @@ type DataBaseController struct {
 }
 
 func Connect(connStr *string) (*sql.DB, error) {
-	err := godotenv.Load(".env")
+	err := godotenv.Load(".env.example")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
